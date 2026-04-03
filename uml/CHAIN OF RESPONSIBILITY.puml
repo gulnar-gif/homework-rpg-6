@@ -1,0 +1,95 @@
+@startuml
+title Chain of Responsibility - Homework 6
+
+abstract class DefenseHandler {
+  -next: DefenseHandler
+  +setNext(next: DefenseHandler): DefenseHandler
+  #getNext(): DefenseHandler
+  #passToNext(damage: int, target: ArenaFighter): void
+  +handle(incomingDamage: int, target: ArenaFighter): void
+}
+
+class DodgeHandler {
+  -dodgeChance: double
+  -random: Random
+  +DodgeHandler(dodgeChance: double, seed: long)
+  +handle(incomingDamage: int, target: ArenaFighter): void
+}
+
+class BlockHandler {
+  -blockPercent: double
+  +BlockHandler(blockPercent: double)
+  +handle(incomingDamage: int, target: ArenaFighter): void
+}
+
+class ArmorHandler {
+  -armorValue: int
+  +ArmorHandler(armorValue: int)
+  +handle(incomingDamage: int, target: ArenaFighter): void
+}
+
+class HpHandler {
+  +handle(incomingDamage: int, target: ArenaFighter): void
+}
+
+class TournamentEngine {
+  -hero: ArenaFighter
+  -opponent: ArenaOpponent
+  -random: Random
+  +TournamentEngine(hero: ArenaFighter, opponent: ArenaOpponent)
+  +setRandomSeed(seed: long): TournamentEngine
+  +runTournament(): TournamentResult
+}
+
+class ArenaFighter {
+  -name: String
+  -health: int
+  -maxHealth: int
+  -dodgeChance: double
+  -blockRating: int
+  -armorValue: int
+  -attackPower: int
+  -healPotions: int
+  +getDodgeChance(): double
+  +getBlockRating(): int
+  +getArmorValue(): int
+  +takeDamage(amount: int): void
+  +isAlive(): boolean
+}
+
+class ArenaOpponent {
+  -name: String
+  -health: int
+  -attackPower: int
+  +getAttackPower(): int
+  +isAlive(): boolean
+}
+
+class TournamentResult {
+  -winner: String
+  -rounds: int
+  -log: List<String>
+  +getWinner(): String
+  +setWinner(winner: String): void
+  +getRounds(): int
+  +setRounds(rounds: int): void
+  +addLine(line: String): void
+  +getLog(): List<String>
+}
+
+DefenseHandler <|-- DodgeHandler
+DefenseHandler <|-- BlockHandler
+DefenseHandler <|-- ArmorHandler
+DefenseHandler <|-- HpHandler
+
+DefenseHandler --> "0..1" DefenseHandler : next
+DefenseHandler ..> ArenaFighter : target
+
+TournamentEngine --> ArenaFighter
+TournamentEngine --> ArenaOpponent
+TournamentEngine --> TournamentResult
+TournamentEngine ..> DodgeHandler : builds
+TournamentEngine ..> BlockHandler : builds
+TournamentEngine ..> ArmorHandler : builds
+TournamentEngine ..> HpHandler : builds
+@enduml

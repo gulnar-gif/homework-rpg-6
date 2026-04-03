@@ -1,0 +1,91 @@
+@startuml
+title Command Pattern - Homework 6
+
+interface ActionCommand {
+  +execute(): void
+  +undo(): void
+  +getDescription(): String
+}
+
+class AttackCommand {
+  -target: ArenaOpponent
+  -attackPower: int
+  -damageDealt: int
+  +AttackCommand(target: ArenaOpponent, attackPower: int)
+  +execute(): void
+  +undo(): void
+  +getDescription(): String
+}
+
+class HealCommand {
+  -target: ArenaFighter
+  -healAmount: int
+  -actualHealApplied: int
+  +HealCommand(target: ArenaFighter, healAmount: int)
+  +execute(): void
+  +undo(): void
+  +getDescription(): String
+}
+
+class DefendCommand {
+  -target: ArenaFighter
+  -dodgeBoost: double
+  +DefendCommand(target: ArenaFighter, dodgeBoost: double)
+  +execute(): void
+  +undo(): void
+  +getDescription(): String
+}
+
+class ActionQueue {
+  -queue: List<ActionCommand>
+  +enqueue(cmd: ActionCommand): void
+  +undoLast(): void
+  +executeAll(): void
+  +getCommandDescriptions(): List<String>
+}
+
+class ArenaFighter {
+  -name: String
+  -health: int
+  -maxHealth: int
+  -dodgeChance: double
+  -blockRating: int
+  -armorValue: int
+  -attackPower: int
+  -healPotions: int
+  +getName(): String
+  +getHealth(): int
+  +getMaxHealth(): int
+  +getDodgeChance(): double
+  +getBlockRating(): int
+  +getArmorValue(): int
+  +getAttackPower(): int
+  +getHealPotions(): int
+  +takeDamage(amount: int): void
+  +heal(amount: int): void
+  +modifyDodgeChance(delta: double): void
+  +isAlive(): boolean
+}
+
+class ArenaOpponent {
+  -name: String
+  -health: int
+  -maxHealth: int
+  -attackPower: int
+  +getName(): String
+  +getHealth(): int
+  +getAttackPower(): int
+  +takeDamage(amount: int): void
+  +restoreHealth(amount: int): void
+  +isAlive(): boolean
+}
+
+ActionCommand <|.. AttackCommand
+ActionCommand <|.. HealCommand
+ActionCommand <|.. DefendCommand
+
+ActionQueue --> ActionCommand : queue
+AttackCommand --> ArenaOpponent : target
+HealCommand --> ArenaFighter : target
+DefendCommand --> ArenaFighter : target
+@enduml
